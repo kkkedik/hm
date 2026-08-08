@@ -13,7 +13,7 @@ allure {
     adapter {
         aspectjWeaver.set(true)// обработка аннотации step
         frameworks {
-            junir5 {
+            junit5 {
                 adapterVersion.set("2.19.0")
             }
         }

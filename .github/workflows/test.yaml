@@ -1,40 +1,63 @@
 name: Test
 
-on: workflow_dispatch
+on:
+  push:
+    branches: [ main, master ] # Авто-запуск при пуше
+  pull_request:
+    branches: [ main, master ] # Авто-запуск при PR
+  workflow_dispatch:           # Ручной запуск из вкладки Actions
 
 jobs:
   test:
-    # где заускаем
     runs-on: ubuntu-latest
-    # что делаем
+
+    # Права на запись для бота (защита от ошибки 403 при публикации отчета)
+    permissions:
+      contents: write
+
     steps:
-      # выкачиваем репозиторий
-      - uses: actions/checkout@v3
-      # настраиваем java
-      - uses: actions/setup-java@v3
+      # Выкачиваем репозиторий
+      - uses: actions/checkout@v4
+
+      # Настраиваем Java
+      - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
+
+      # Запускаем Selenoid
       - uses: Xotabu4/selenoid-github-action@v2
-      # запускаем тесты
-      - run: ./gradlew clean test -Dselenide.remote=http://localhost:4444/wd/hub
-      # скачиваем историю тестов
-      - uses: actions/checkout@v2
+
+      # Выдаем права на исполнение gradlew (защита от ошибки Permission Denied)
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      # Запускаем тесты
+      - name: Run tests
+        run: ./gradlew clean test -Dselenide.remote=http://localhost:4444/wd/hub
+
+      # Скачиваем историю тестов из gh-pages
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
         if: always()
         continue-on-error: true
         with:
           ref: gh-pages
           path: gh-pages
-      # генерируем отчет
-      - uses: simple-elf/allure-report-action@master
+
+      # Генерируем отчет Allure
+      - name: Generate Allure Report
+        uses: simple-elf/allure-report-action@master
         if: always()
         with:
           gh_pages: gh-pages
           allure_results: build/allure-results
           allure_report: allure-report
           allure_history: allure-history
-      # публикуем отчет
-      - uses: peaceiris/actions-gh-pages@v2
+
+      # Публикуем отчет в GitHub Pages
+      - name: Deploy Allure Report
+        uses: peaceiris/actions-gh-pages@v3
         if: always()
         env:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
