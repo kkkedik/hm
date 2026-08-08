@@ -39,7 +39,17 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-test {
+tasks.withType(Test) {
     useJUnitPlatform()
     systemProperties(System.getProperties())
+    testLogging {
+        lifecycle {
+            events("started", "skipped", "failed", "standard_error", "standard_out")
+            exceptionFormat("short")
+        }
+    }
+}
+
+task demoqa_test(type: Test){
+    useJUnitPlatform{includeTags("demoqa")}
 }

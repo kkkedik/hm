@@ -4,6 +4,7 @@ import com.codeborne.selenide.logevents.SelenideLogger;
 import enums.Account;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -43,6 +44,7 @@ public class TestPotters extends TestBase {
         });
     }
 
+    @Tag("demoqa")
     @ParameterizedTest
     @DisplayName("Успешная авторизация пользователя в системе используя класс с методами")
     @ValueSource(strings = {
