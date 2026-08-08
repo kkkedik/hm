@@ -31,6 +31,8 @@ dependencies {
             'org.slf4j:slf4j-log4j12:2.0.13',
             'io.qameta.allure:allure-selenide:2.29.1'
     )
+
+    testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.9.0')
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -39,4 +41,5 @@ tasks.withType(JavaCompile).configureEach {
 
 test {
     useJUnitPlatform()
+    systemProperties(System.getProperties())
 }
