@@ -1,6 +1,7 @@
 package tests;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import enums.Account;
 import heplers.Attach;
@@ -28,17 +29,22 @@ public class TestPotters extends TestBase {
     static void beforeAll() {
         Configuration.baseUrl = "https://www.globalsqa.com/angularJs-protractor/BankingProject";
         Configuration.browserSize = "1920x1080";
-//        Configuration.browser = "chrome";
         Configuration.timeout = 10000;
-//        Configuration.holdBrowserOpen = true;
-//        Configuration.remote = "https://www.globalsqa.com/angularJs-protractor/BankingProject";
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("selenoid:options", Map.<String, Object>of(
-                "enableVNC", true,
-                "enableVideo", true
-        ));
-        Configuration.browserCapabilities = capabilities;
+        // Считываем переменную, переданную через -Dselenide.remote=...
+        String remoteUrl = System.getProperty("selenide.remote");
+
+        // Если переменная передана (например, в Jenkins или GitHub Actions) — подключаем Selenoid
+        if (remoteUrl != null && !remoteUrl.isEmpty()) {
+            Configuration.remote = remoteUrl;
+
+            DesiredCapabilities capabilities = new DesiredCapabilities();
+            capabilities.setCapability("selenoid:options", Map.<String, Object>of(
+                    "enableVNC", true,
+                    "enableVideo", true
+            ));
+            Configuration.browserCapabilities = capabilities;
+        }
 
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
     }
@@ -115,5 +121,7 @@ public class TestPotters extends TestBase {
         Attach.pageSource();
         Attach.browserConsoleLogs();
         Attach.addVideo();
+
+        Selenide.closeWebDriver();
     }
 }
