@@ -122,6 +122,6 @@ public class TestPotters extends TestBase {
         Attach.browserConsoleLogs();
         Attach.addVideo();
 
-        Selenide.closeWebDriver();
+//        Selenide.closeWebDriver();
     }
 }
