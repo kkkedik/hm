@@ -57,3 +57,7 @@ task demoqa_test(type: Test) {
 task property_test(type: Test) {
     useJUnitPlatform { includeTags("property") }
 }
+
+task hello_test(type: Test) {
+    useJUnitPlatform { includeTags("hello") }
+}
